@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription, fromEvent,from, merge, Observable  } from 'rxjs';
-import { subscribeOn } from 'rxjs/operators';
-import { TimeInterval } from 'rxjs/internal/operators/timeInterval';
+import { Subscription, fromEvent,from, merge, Observable,throwError  } from 'rxjs';
 import { AuthGuard } from '../auth.guard';
+import { HttpClient } from '@angular/common/http';
 
 
 const MINUTES_UNITL_AUTO_LOGOUT = 5 // in mins
-const CHECK_INTERVAL = 15000 // in ms
+const CHECK_INTERVAL =15000 // in ms
 const STORE_KEY =  'lastAction';
 
 
@@ -22,17 +21,20 @@ export class AutologoutService {
   public getLastAction() {
     return parseInt(sessionStorage.getItem(STORE_KEY));
   }
- public setLastAction(lastAction: number) {
+
+  public setLastAction(lastAction: number) {
   sessionStorage.setItem(STORE_KEY, lastAction.toString());
   }
 
-  constructor(private router: Router, private authGuard:AuthGuard) { 
+  constructor(private router: Router, private authGuard:AuthGuard,private http:HttpClient) { 
+    //console.log('Inside constructor');
     this.check();
     this.initListener();
     this.initInterval();     
     this.setLoginStatus();     
   }
 
+  //resets the timer on every user action
   reset() {
     this.setLastAction(Date.now());
   }
@@ -46,6 +48,7 @@ export class AutologoutService {
 
   
 initListener() {
+//Events that has to be Monitored.
 const  events = [
     'scroll',
     'wheel',
@@ -57,45 +60,51 @@ const  events = [
     'close',
     'keypress'
 ];
+//Creats an Observable for all events
 const eventStreams = events.map((ev) => fromEvent(document, ev));
-const allEvents$ = merge(...eventStreams);
+  //merge i.e. combine the emitted values
+  const allEvents = merge(...eventStreams);
 
-this.subscription = allEvents$.subscribe((event) => {
-  // do something with event...
-  // event may be of any type present in the events array.
-  //console.log(event);
-  this.reset();
+  //subscibtion that resets the timer Interval
+  this.subscription = allEvents.subscribe((event) => {
+  
+  this.reset(); // resets the timer
 });
 
+//add another event to the observable to call logout function on window Close
 this.subscription.add( fromEvent(window,'close').subscribe(e => { this.clearSubscribeLogout() }) );
 
 }  
 
+//Sets the interval check for every 1 min
   initInterval() {  
    this.handle = setInterval(() => { 
-      this.check();
+      this.check(); 
     }, CHECK_INTERVAL);
   }
 
+  //Method checks the duration of time where the user remained inactive
   check() {
     const now = Date.now();
-    const timeleft = this.getLastAction() + MINUTES_UNITL_AUTO_LOGOUT * 60 * 1000;
-    const diff = timeleft - now;
-    const isTimeout = diff < 0;
+    const timeleft = this.getLastAction() + MINUTES_UNITL_AUTO_LOGOUT * 60 * 1000;//logintime + 5mins in seconds ex: 40 +5
+    const diff = timeleft - now;//45 - 46min
+    const isTimeout = diff < 0; //false
 
-    console.log(diff);
+    //console.log(diff);
 
-    // if (isTimeout && this.auth.loggedIn)
-    if (isTimeout)  {     
+    // if (isTimeout )
+    if (isTimeout && this.authGuard.isLoggedIn)  {     
       this.clearSubscribeLogout();
     }
   }
 
+  //Method called on LogOut: Clears session, interval and navigate to Login
   clearSubscribeLogout()
   {
     if(this.authGuard.isLoggedIn) {
 
       this.authGuard.editLoginStatus('Login');
+
      /* autologout */
      this.subscription.unsubscribe();
      clearInterval(this.handle);
@@ -106,9 +115,9 @@ this.subscription.add( fromEvent(window,'close').subscribe(e => { this.clearSubs
     }
   }
 
+  //Method to set Login Status in the header Link
   setLoginStatus(){
-    if(this.authGuard.isLoggedIn)
-    {
+    if(this.authGuard.isLoggedIn) {
       this.authGuard.editLoginStatus("Logout");
     }
     else{

@@ -17,7 +17,6 @@ import { from } from 'rxjs';
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { UploadComponent } from './upload/upload.component';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { FileuploadComponent } from './fileupload/fileupload.component';
@@ -31,8 +30,7 @@ import { AutologoutComponent } from './autologout/autologout.component';
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
-    UploadComponent,
+    LoginComponent,    
     HeaderComponent,
     FooterComponent,
     FileuploadComponent,

@@ -2,42 +2,33 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../model/user';
 import { AuthGuard } from '../auth.guard';
+import { HttpClient  } from '@angular/common/http';
 import { AutologoutService } from '../services/autologout.service';
-import { Observable } from 'rxjs';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  constructor(private router:Router, private authGuard: AuthGuard, private autoLogout: AutologoutService ) { }
+  constructor(private router:Router, private authGuard: AuthGuard, 
+    private autoLogout: AutologoutService, private http:HttpClient ) { }
 
-  logout(): void {
-    sessionStorage.setItem('isLoggedIn', "false");
-    sessionStorage.removeItem('token');
-    this.router.navigate(['./login']);    
+//Method sets the session and Inits the autoLogout timer();
+  setSession(token) {
+    this.autoLogout.init();
+    this.authGuard.editLoginStatus('Logout');
+    sessionStorage.setItem('isLoggedIn', "true");
+    sessionStorage.setItem('token', token);
   }
-  
-  //Method called on Loin
+
+
+    //Method called on Loin
   login(userModel:User): Boolean {
-
-    if(userModel.username === "saraswathi" && userModel.password === "test")
-      {
-        console.log('yes');
-
-        //this.authService.authLogin(this.model);
-        this.authGuard.editLoginStatus('Logout');
-
-        sessionStorage.setItem('isLoggedIn', "true");
-        sessionStorage.setItem('token', userModel.username);
-
-        console.log(sessionStorage.getItem('isLoggedIn'));
-
-        //this.autoLogout.init();    
+    if(userModel.username === "saraswathi" && userModel.password === "test") {          
+        this.setSession(userModel.username);  
         return true;    
       }
       else {
-        let errorMessage = "Incorrrect username or password";
         return false;
       }
   }

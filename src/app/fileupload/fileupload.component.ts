@@ -18,25 +18,48 @@ export class FileuploadComponent implements OnInit {
   show: true;
   subscription: Subscription;
 
+  //To retrieve the input file control 
   @ViewChild('uploadfile', { static: false }) uUpload: ElementRef;
 
-  //Cache
+  
   fileSave: any;
-  cacheM: Map<string, File> = new Map<string, File>();
+  cacheM: Map<string, File> = new Map<string, File>();//to store the upload file info
   showText: any;
 
-  constructor(private uploadFB: FormBuilder, private uploadService: UploadserviceService, private autoLogout :AutologoutService) {
+  constructor(private uploadFB: FormBuilder, private uploadService: UploadserviceService, 
+    private autoLogout :AutologoutService) {
   }
 
   ngOnInit() {
+
+    //Creates the form
     this.createUploadForm();
+
+    //get the form control
     const form = document.getElementById('uploadForm');
+
+    //retrieving uploaded file details from session storage during page Refersh.
+    let cacheSessionName = JSON.stringify(sessionStorage.getItem('token'));
+    if(sessionStorage.getItem(cacheSessionName) !== "") {
+      this.cacheM =   new Map(JSON.parse(sessionStorage.getItem(cacheSessionName)));
+    }
+
+    //Created Observable and subscribed for form submit event
     this.subscription = fromEvent(form, 'submit').subscribe((event) => {
+
+      //On form submit the file deails is save to Map(filename, file)
       if (this.fileSave) {
         this.cacheM.set(this.fileSave.name, this.fileSave);
-        this.cacheM.forEach((key, value) => { console.log('key:' + key, 'value:' + value) });
+        //this.cacheM.forEach((key, value) => { console.log('key:' + key, 'value:' + value) });
         this.fileSave ="";
+
+        //Stores the Map in Session 
+        if(this.cacheM.size>0) {
+          sessionStorage.setItem(JSON.stringify(sessionStorage.getItem('token')), 
+            JSON.stringify(Array.from(this.cacheM.entries())));
+          }
       }
+
     });
 
   }
@@ -49,11 +72,11 @@ export class FileuploadComponent implements OnInit {
   }
 
   //On file change stores the file
-  onFileChange(event) {
+  onFileChange(event) {  
     if (event.target.files.length > 0) {
-      this.fileSave = event.target.files[0];
+      this.fileSave = event.target.files[0];//sets the file value to the upload form/uploadfile model
       this.uploadFG.get('uploadfile').setValue(this.fileSave);
-      console.log('test', this.fileSave);
+      //console.log('test', this.fileSave);
     }
   }
 
@@ -61,17 +84,21 @@ export class FileuploadComponent implements OnInit {
   onUploadSubmit() {
 
     if (this.uploadFG.valid) {
-      
-      this.autoLogout.reset();//resets the logout timer.
+
+      //resets the logout timer.
+      this.autoLogout.reset();
 
       this.errorMessage ="";
+
+      //appends the file to the form data to send trhough http post
       const formData = new FormData();
       formData.append('file', this.uploadFG.get('uploadfile').value);
-      /*
+      
       //code to send file to backend
-      let response = this.uploadService.upload(formData).subscribe(result => console.log(result),
+     /* let response = this.uploadService.upload(formData).subscribe(result => console.log(result),
       errMess => { this.errorMessage= <any>errMess;} );*/
 
+      //resets the value of the control
       this.uploadFG.reset(
         { uploadfile: [' '] }
       );

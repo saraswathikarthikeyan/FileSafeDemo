@@ -15,8 +15,8 @@ export class HeaderComponent implements OnInit {
   ngOnInit() {
     this.authGuard.cast.subscribe( (loginstatus) => { this.loginLabel = loginstatus } );   
   }
-
   
+  //Method called on Login link click
   loginToggle(){
     if(!this.authGuard.isLoggedIn) {
       this.router.navigate(['./login']); 

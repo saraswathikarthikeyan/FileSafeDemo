@@ -4,7 +4,6 @@ import { User } from '../model/user';
 import { AuthGuard } from '../auth.guard';
 import { LoginService} from '../services/login.service';
 import { Router } from '@angular/router';
-import { from } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -19,12 +18,15 @@ export class LoginComponent implements OnInit {
   returnUrl: string = '/fileupload';
 
   constructor(private loginFB: FormBuilder, public router:Router,
-    private authGuard: AuthGuard, private loginService: LoginService ) {       
-      //Method creates the Form
-      this.createLoginForm();
+    private authGuard: AuthGuard, private loginService: LoginService ) {   
+      //Resets the login link text
+      this.authGuard.editLoginStatus('Login');
+      
     }
 
   ngOnInit() {    
+    //Method creates the Form
+    this.createLoginForm();
   }
   //Object contains the ErrorList for Form Controls
   formErrors = {
@@ -100,11 +102,14 @@ export class LoginComponent implements OnInit {
     //checks form is valid  
     if(this.loginFG.valid)
     {
-      console.log(this.loginModel);
+      //console.log(this.loginModel);
 
-      //calls the service to validate the user controls
+      this.errorMessage = "Processing..."
+
+      //calls the service to validate the user credentials
       this.loginService.login(this.loginModel) ? this.router.navigate([this.returnUrl])  
       : this.errorMessage = "Invalid User name or Password";
+ 
       
     }
     else{
