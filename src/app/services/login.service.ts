@@ -14,13 +14,13 @@ export class LoginService {
     private autoLogout: AutologoutService, private http:HttpClient ) { }
 
 //Method sets the session and Inits the autoLogout timer();
-  setSession(token) {
+  setSession(token):void {
     this.autoLogout.init();
     this.authGuard.editLoginStatus('Logout');
     sessionStorage.setItem('isLoggedIn', "true");
     sessionStorage.setItem('token', token);
   }
-
+ 
 
     //Method called on Loin
   login(userModel:User): Boolean {

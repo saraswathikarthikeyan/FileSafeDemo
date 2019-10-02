@@ -17,7 +17,7 @@ export class HeaderComponent implements OnInit {
   }
   
   //Method called on Login link click
-  loginToggle(){
+  loginToggle():void{
     if(!this.authGuard.isLoggedIn) {
       this.router.navigate(['./login']); 
     }

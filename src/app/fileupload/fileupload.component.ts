@@ -13,8 +13,6 @@ export class FileuploadComponent implements OnInit {
 
   uploadFG: FormGroup;
   errorMessage: string;
-  firstTime = Date.now();
-  lasttime = Date.now();
   show: true;
   subscription: Subscription;
 
@@ -72,7 +70,7 @@ export class FileuploadComponent implements OnInit {
   }
 
   //On file change stores the file
-  onFileChange(event) {  
+  onFileChange(event):void {  
     if (event.target.files.length > 0) {
       this.fileSave = event.target.files[0];//sets the file value to the upload form/uploadfile model
       this.uploadFG.get('uploadfile').setValue(this.fileSave);
@@ -81,7 +79,7 @@ export class FileuploadComponent implements OnInit {
   }
 
 
-  onUploadSubmit() {
+  onUploadSubmit():void {
 
     if (this.uploadFG.valid) {
 

@@ -18,11 +18,11 @@ export class AutologoutService {
   subscription : Subscription;
   handle;
 
-  public getLastAction() {
+  public getLastAction():number {
     return parseInt(sessionStorage.getItem(STORE_KEY));
   }
 
-  public setLastAction(lastAction: number) {
+  public setLastAction(lastAction: number):void {
   sessionStorage.setItem(STORE_KEY, lastAction.toString());
   }
 
@@ -35,11 +35,11 @@ export class AutologoutService {
   }
 
   //resets the timer on every user action
-  reset() {
+  reset():void {
     this.setLastAction(Date.now());
   }
 
-  init() {
+  init():void {
     sessionStorage.setItem('lastAction',Date.now().toString());
     this.check();
     this.initListener();
@@ -47,7 +47,7 @@ export class AutologoutService {
  }
 
   
-initListener() {
+initListener():void {
 //Events that has to be Monitored.
 const  events = [
     'scroll',
@@ -77,14 +77,14 @@ this.subscription.add( fromEvent(window,'close').subscribe(e => { this.clearSubs
 }  
 
 //Sets the interval check for every 1 min
-  initInterval() {  
+  initInterval():void {  
    this.handle = setInterval(() => { 
       this.check(); 
     }, CHECK_INTERVAL);
   }
 
   //Method checks the duration of time where the user remained inactive
-  check() {
+  check():void {
     const now = Date.now();
     const timeleft = this.getLastAction() + MINUTES_UNITL_AUTO_LOGOUT * 60 * 1000;//logintime + 5mins in seconds ex: 40 +5
     const diff = timeleft - now;//45 - 46min
@@ -99,8 +99,7 @@ this.subscription.add( fromEvent(window,'close').subscribe(e => { this.clearSubs
   }
 
   //Method called on LogOut: Clears session, interval and navigate to Login
-  clearSubscribeLogout()
-  {
+  clearSubscribeLogout():void  {
     if(this.authGuard.isLoggedIn) {
 
       this.authGuard.editLoginStatus('Login');
@@ -116,7 +115,7 @@ this.subscription.add( fromEvent(window,'close').subscribe(e => { this.clearSubs
   }
 
   //Method to set Login Status in the header Link
-  setLoginStatus(){
+  setLoginStatus():void{
     if(this.authGuard.isLoggedIn) {
       this.authGuard.editLoginStatus("Logout");
     }

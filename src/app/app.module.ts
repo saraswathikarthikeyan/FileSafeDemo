@@ -8,9 +8,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';*/
 
 import { AuthGuard } from './auth.guard';
-import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
-import {HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { from } from 'rxjs';
 
 
@@ -21,16 +21,16 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { FileuploadComponent } from './fileupload/fileupload.component';
 
-import  { AutologoutService } from './services/autologout.service';
-import  { LoginService } from './services/login.service';
-import  { UploadserviceService } from './services/uploadservice.service';
+import { AutologoutService } from './services/autologout.service';
+import { LoginService } from './services/login.service';
+import { UploadserviceService } from './services/uploadservice.service';
 import { AutologoutComponent } from './autologout/autologout.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,    
+    LoginComponent,
     HeaderComponent,
     FooterComponent,
     FileuploadComponent,
@@ -38,24 +38,19 @@ import { AutologoutComponent } from './autologout/autologout.component';
   ],
   imports: [
     BrowserModule,
-    
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
     AppRoutingModule
-    /*MatInputModule,
-    MatButtonModule,
-    MatListModule,
-    MatProgressSpinnerModule*/
   ],
   providers: [AuthGuard,
     AutologoutService,
-  LoginService,
-UploadserviceService],
-    entryComponents: [LoginComponent],
+    LoginService,
+    UploadserviceService],
+  entryComponents: [LoginComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  constructor(){}
+  constructor() { }
 
- }
+}

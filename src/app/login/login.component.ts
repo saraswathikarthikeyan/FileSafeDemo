@@ -60,9 +60,9 @@ export class LoginComponent implements OnInit {
   }
 
   //Method triggers on Value changes and check for userInput
-  onValueChanged(data?: any) {
+  onValueChanged(data?: any):void {
 
-    if(!this.loginFG) {return}
+    if(!this.loginFG) {return;}
 
     const form = this.loginFG;
     for (const field in this.formErrors)
@@ -94,7 +94,7 @@ export class LoginComponent implements OnInit {
     }
 
     //Method calls on user clicks the Login Button
-  onSubmit(){
+  onSubmit():void{
 
     //Form group control value is assigned to the UserModel.
     this.loginModel = this.loginFG.value;
