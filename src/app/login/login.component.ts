@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
   };
 
   //Validation message for Form Controls
-  validationMessages = {
+  validationMessages = { 
     'username': {
       'required':      'User Name is required.',
       'minlength':     'User Name must be at least 2 characters long.',
