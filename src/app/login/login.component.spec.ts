@@ -6,6 +6,8 @@ import { FormsModule,ReactiveFormsModule  } from '@angular/forms';
 import {By } from '@angular/platform-browser';
 
 import { LoginComponent } from './login.component';
+import { User } from '../model/user';
+
 import { HttpHandler } from '@angular/common/http';
 import { LoginService } from '../services/login.service';
 
@@ -15,6 +17,7 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let debugElement:DebugElement;
   let htmlElement:HTMLElement;
+  let userModel:User;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -37,7 +40,6 @@ describe('LoginComponent', () => {
 
     debugElement = fixture.debugElement.query(By.css('*'));    
     htmlElement = debugElement.nativeElement;
-    console.log(htmlElement);
   });
 
   //Checks the Component
@@ -151,29 +153,41 @@ it('Test Submit Form',()=>{
 
   let userName = 'saraswathi';
   let password = 'test';
-  let loginService = debugElement.injector.get(LoginService);
+  let lgnModel = {
+    username:userName,
+    password:password
+  };
 
+  //SpyOn Login Service Method
+  let loginService = debugElement.injector.get(LoginService);
   let spyLoginMethod = spyOn(loginService, 'login').and.callThrough();
 
-
+  //Set username & Password
   component.loginFG.controls['username'].setValue(userName);
   component.loginFG.controls['password'].setValue(password);
   fixture.detectChanges();
 
+  //SpyOn Login Button
   let loginButton = fixture.debugElement.query(By.css('button[type="submit"]')).nativeElement;
-  spyOn(component, 'onSubmit');
+  spyOn(component, 'onSubmit').and.callThrough();
 
 
   //Either one Of the Below is Enoguh to Check the Validity.
   expect(component.loginFG.valid).toBeTruthy();
   expect(loginButton.disabled).toBeFalsy();
 
+  //Trigger Click Event
   loginButton.click();
   fixture.detectChanges();
+
+  //Expect onSubmit method is called.
   expect(component.onSubmit).toHaveBeenCalled();
 
-  expect(spyLoginMethod).toHaveBeenCalled;
+  expect(spyLoginMethod).toHaveBeenCalled();
 
+  let user: User;
+  // Subscribe to the Observable and store the user in a local variable.
+  //component.loggedIn.subscribe((value) => user = value);
 
   //expect(component.loginModel.username).toContain(userName);
   //expect(component.loginModel.password).toContain(password);
