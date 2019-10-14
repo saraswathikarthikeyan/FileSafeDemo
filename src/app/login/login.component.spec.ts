@@ -6,6 +6,7 @@ import { FormsModule,ReactiveFormsModule  } from '@angular/forms';
 import {By } from '@angular/platform-browser';
 
 import { LoginComponent } from './login.component';
+import { FileuploadComponent } from '../fileupload/fileupload.component';
 import { User } from '../model/user';
 
 import { HttpHandler } from '@angular/common/http';
@@ -23,10 +24,10 @@ describe('LoginComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes([{ path: 'login', component: LoginComponent }]),
+        RouterTestingModule.withRoutes([{ path: 'login', component: LoginComponent }, {path:'fileupload', component:FileuploadComponent}]),
         FormsModule,ReactiveFormsModule 
       ],
-      declarations: [ LoginComponent ],
+      declarations: [ LoginComponent, FileuploadComponent ],
       providers: [ LoginService ],
       schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
     })
@@ -183,14 +184,11 @@ it('Test Submit Form',()=>{
   //Expect onSubmit method is called.
   expect(component.onSubmit).toHaveBeenCalled();
 
-  expect(spyLoginMethod).toHaveBeenCalled();
+  //Expect to call the service Method: Login  
+  expect(spyLoginMethod).toHaveBeenCalledWith(component.loginModel);
 
-  let user: User;
-  // Subscribe to the Observable and store the user in a local variable.
-  //component.loggedIn.subscribe((value) => user = value);
 
-  //expect(component.loginModel.username).toContain(userName);
-  //expect(component.loginModel.password).toContain(password);
+  
 
 });
 
