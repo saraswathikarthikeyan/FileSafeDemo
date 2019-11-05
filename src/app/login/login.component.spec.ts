@@ -9,7 +9,7 @@ import { LoginComponent } from './login.component';
 import { FileuploadComponent } from '../fileupload/fileupload.component';
 import { User } from '../model/user';
 
-import { HttpHandler } from '@angular/common/http';
+import { Router } from "@angular/router";
 import { LoginService } from '../services/login.service';
 
 
@@ -18,13 +18,15 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
   let debugElement:DebugElement;
   let htmlElement:HTMLElement;
-  let userModel:User;
+  let router:Router;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientTestingModule,
-        RouterTestingModule.withRoutes([{ path: 'login', component: LoginComponent }, {path:'fileupload', component:FileuploadComponent}]),
+        RouterTestingModule.withRoutes([
+          { path: 'login', component: LoginComponent }, 
+          { path:'fileupload', component:FileuploadComponent }]),
         FormsModule,ReactiveFormsModule 
       ],
       declarations: [ LoginComponent, FileuploadComponent ],
@@ -37,6 +39,7 @@ describe('LoginComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+    router = TestBed.get(Router);
     fixture.detectChanges();
 
     debugElement = fixture.debugElement.query(By.css('*'));    
@@ -154,11 +157,7 @@ it('Test Submit Form',()=>{
 
   let userName = 'saraswathi';
   let password = 'test';
-  let lgnModel = {
-    username:userName,
-    password:password
-  };
-
+ 
   //SpyOn Login Service Method
   let loginService = debugElement.injector.get(LoginService);
   let spyLoginMethod = spyOn(loginService, 'login').and.callThrough();
@@ -171,6 +170,8 @@ it('Test Submit Form',()=>{
   //SpyOn Login Button
   let loginButton = fixture.debugElement.query(By.css('button[type="submit"]')).nativeElement;
   spyOn(component, 'onSubmit').and.callThrough();
+  let routerSpy = spyOn(router, 'navigate').and.callThrough();
+
 
 
   //Either one Of the Below is Enoguh to Check the Validity.
@@ -184,10 +185,12 @@ it('Test Submit Form',()=>{
   //Expect onSubmit method is called.
   expect(component.onSubmit).toHaveBeenCalled();
 
+  
   //Expect to call the service Method: Login  
   expect(spyLoginMethod).toHaveBeenCalledWith(component.loginModel);
 
-
+  //Expect window redirect to fileupload page
+  expect(routerSpy).toHaveBeenCalledWith(['/fileupload']);
   
 
 });
